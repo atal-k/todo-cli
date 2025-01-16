@@ -1,0 +1,5 @@
+*.exe
+*.db
+/bin
+.env
+.DS_Store
