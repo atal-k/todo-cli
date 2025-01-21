@@ -77,3 +77,73 @@ func (d *DB) CreateTask(title string) (*Task, error) {
 		CreatedAt: time.Now(),
 	}, nil
 }
+
+func (d *DB) GetTask(id int64) (*Task, error) {
+	row := d.db.QueryRow("SELECT id, title, completed, created_at FROM tasks WHERE id = ?", id)
+
+	var task Task
+	err := row.Scan(&task.ID, &task.Title, &task.Completed, &task.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	return &task, nil
+}
+
+func (d *DB) GetAllTasks() ([]*Task, error) {
+	rows, err := d.db.Query("SELECT id, title, completed, created_at FROM tasks")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tasks []*Task
+	for rows.Next() {
+		var task Task
+		if err := rows.Scan(&task.ID, &task.Title, &task.Completed, &task.CreatedAt); err != nil {
+			return nil, err
+		}
+		tasks = append(tasks, &task)
+	}
+
+	return tasks, nil
+}
+
+func (d *DB) GetTasksByStatus(completed bool) ([]*Task, error) {
+	rows, err := d.db.Query("SELECT id, title, completed, created_at FROM tasks WHERE completed = ?", completed)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tasks []*Task
+	for rows.Next() {
+		task := &Task{}
+		if err := rows.Scan(&task.ID, &task.Title, &task.Completed, &task.CreatedAt); err != nil {
+			return nil, err
+		}
+		tasks = append(tasks, task)
+	}
+
+	return tasks, nil
+}
+
+func (d *DB) UpdateTaskStatus(id int64, completed bool) error {
+	_, err := d.db.Exec("UPDATE tasks SET completed = ? WHERE id = ?", completed, id)
+	return err
+}
+
+func (d *DB) UpdateTask(task *Task) error {
+	_, err := d.db.Exec("UPDATE tasks SET title = ?, completed = ? WHERE id = ?", task.Title, task.Completed, task.ID)
+	return err
+}
+
+func (d *DB) DeleteTask(id int64) error {
+	_, err := d.db.Exec("DELETE FROM tasks WHERE id = ?", id)
+	return err
+}
+
+func (d *DB) DeleteAllTasks() error {
+	_, err := d.db.Exec("DELETE FROM tasks")
+	return err
+}
