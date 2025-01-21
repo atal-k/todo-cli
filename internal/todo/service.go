@@ -67,3 +67,30 @@ func (s *Service) ListPendingTasks() error {
 	}
 	return nil
 }
+
+// CompleteTask marks a task as completed
+func (s *Service) CompleteTask(id int) error {
+	return s.db.UpdateTaskStatus(int64(id), true)
+}
+
+// DeleteTask removes a task
+func (s *Service) DeleteTask(id int) error {
+	return s.db.DeleteTask(int64(id))
+}
+
+// ClearTasks removes all tasks
+func (s *Service) ClearTasks() error {
+	return s.db.DeleteAllTasks()
+}
+
+func (s *Service) MarkComplete(id int64) error {
+	return s.db.UpdateTaskStatus(id, true)
+}
+
+func (s *Service) MarkIncomplete(id int64) error {
+	return s.db.UpdateTaskStatus(id, false)
+}
+
+func (s *Service) RemoveTask(id int64) error {
+	return s.db.DeleteTask(id)
+}
