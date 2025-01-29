@@ -1,4 +1,4 @@
-module github.com/atalkumarme/todo-cli
+module github.com/atal-k/todo-cli
 
 go 1.23.4
 

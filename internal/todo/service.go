@@ -3,7 +3,8 @@ package todo
 
 import (
 	"fmt"
-	"github.com/atalkumarme/todo-cli/internal/db"
+
+	"github.com/atal-k/todo-cli/internal/db"
 )
 
 type Service struct {
